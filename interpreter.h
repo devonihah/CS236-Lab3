@@ -41,14 +41,14 @@ public:
 	{
 		cout << "Query Evaluation" << endl;
 		vector<predicate> datalogQueries = myDatalog.getQueries();
-		for (int i = 0; i < datalogQueries.size(); i++)
+		for (unsigned int i = 0; i < datalogQueries.size(); i++)
 		{
 			relation relationsToGrab, columnsToGrab;
 			relationsToGrab = myDatabase.findRelation(datalogQueries[i].getPredicateName());
 			vector<int> Positions;
 			vector<string> renameVals;
 
-			for (int j = 0; j < datalogQueries[i].getVector().size(); j++)
+			for (unsigned int j = 0; j < datalogQueries[i].getVector().size(); j++)
 			{
 				int nextParameterToSelect = j + 1;
 				parameter nextParameterToCheck = datalogQueries[i].getVector()[j];
@@ -56,7 +56,7 @@ public:
 					relationsToGrab = relationsToGrab.select(nextParameterToSelect, nextParameterToCheck.toString());
 			}
 
-			for (int j = 0; j < datalogQueries[i].getVector().size(); j++)
+			for (unsigned int j = 0; j < datalogQueries[i].getVector().size(); j++)
 			{
 				for (int k = j + 1; k < datalogQueries[i].getVector().size(); k++)
 				{
@@ -70,13 +70,13 @@ public:
 				}
 			}
 
-			for (int j = 0; j < datalogQueries[i].getVector().size(); j++)
+			for (unsigned int j = 0; j < datalogQueries[i].getVector().size(); j++)
 			{
 				parameter nextParameterToCheck = datalogQueries[i].getVector()[j];
 				if (nextParameterToCheck.getIsID())
 				{
 					bool duplicate = false;
-					for (int x = 0; x < Positions.size(); x++)
+					for (unsigned int x = 0; x < Positions.size(); x++)
 					{
 						if (nextParameterToCheck.toString() == renameVals[x])
 						{
