@@ -11,6 +11,8 @@ private:
 public:
 	scheme() = default;
 	scheme(vector<string> names) : attributes(names) {}
+	void addAttribute(string newAttribute) { attributes.push_back(newAttribute); }
+	void setAttributes(vector<string> newAttributes) { attributes = newAttributes; }
 	vector<string> getAttributes() { return attributes; }
 	string toString()
 	{

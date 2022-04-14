@@ -25,13 +25,16 @@ public:
     void setScheme(scheme newScheme) { schemes = newScheme; }
     void addTuple(const tuples& tupleToAdd) { tuplesSet.insert(tupleToAdd); }
     void setTuples(set<tuples> tuples) { tuplesSet = tuples; }
+    set<tuples> getTuples() { return tuplesSet; }
     size_t tuplesSetSize() { return tuplesSet.size(); }
 
     relation select(int index1, int index2)
     {
         relation newRelation(id, schemes);
-        for (tuples it : tuplesSet)
+        for (auto it : tuplesSet)
         {
+            //cout << it.getValues()[index1] << endl;
+            //cout << it.getValues()[index2] << endl << endl;
             if (it.getValues()[index1] == it.getValues()[index2])
             {
                 newRelation.addTuple(it);
@@ -40,7 +43,7 @@ public:
         return newRelation;
     }
 
-    relation select(int index, const string& value) const {
+    relation select(int index, string value) {
         relation newRelation(id, schemes);
         for (auto tuple : tuplesSet)
             if (tuple.at(index) == value)

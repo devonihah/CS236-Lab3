@@ -39,57 +39,78 @@ public:
 
 	void interpretQueries()
 	{
-		vector<predicate> queries = myDatalog.getQueries();
-
-		for (size_t i = 0; i < queries.size(); i++)
+		cout << "Query Evaluation" << endl;
+		vector<predicate> datalogQueries = myDatalog.getQueries();
+		for (int i = 0; i < datalogQueries.size(); i++)
 		{
-			string newID = queries.at(i).getPredicateName();
-			vector<int> intVector;
-			vector<string> stringVector;
-			relation newRelation = myDatabase.findRelation(queries[i].getPredicateName());
+			relation relationsToGrab, columnsToGrab;
+			relationsToGrab = myDatabase.findRelation(datalogQueries[i].getPredicateName());
+			vector<int> Positions;
+			vector<string> renameVals;
 
-			for (size_t j = 0; j < queries.at(i).getVector().size(); j++)
+			for (int j = 0; j < datalogQueries[i].getVector().size(); j++)
 			{
-				parameter currentParameter = queries.at(i).getVector().at(j);
-				if (!currentParameter.getIsID())
+				int nextParameterToSelect = j + 1;
+				parameter nextParameterToCheck = datalogQueries[i].getVector()[j];
+				if (!nextParameterToCheck.getIsID())
+					relationsToGrab = relationsToGrab.select(nextParameterToSelect, nextParameterToCheck.toString());
+			}
+
+			for (int j = 0; j < datalogQueries[i].getVector().size(); j++)
+			{
+				for (int k = j + 1; k < datalogQueries[i].getVector().size(); k++)
 				{
-					newRelation = newRelation.select((int)j, currentParameter.toString());
-				}
-				else
-				{
-					bool repeatRelation = false;
-					for (size_t k = 0; k < stringVector.size(); k++)
+					bool exitLoop = false;
+					if (datalogQueries[i].getVector()[j].toString() == datalogQueries[i].getVector()[k].toString())
 					{
-						if (stringVector.size() != 0 && stringVector.at(k) == currentParameter.toString())
-						{
-							repeatRelation = true;
-							newRelation = newRelation.select(int(j), int(k));
-						}
+						relationsToGrab = relationsToGrab.select(j, k);
+						exitLoop = true;
 					}
-					if (repeatRelation == false)
-					{
-						stringVector.push_back(currentParameter.toString());
-						intVector.push_back(int(j));
-					}
+					if (exitLoop) break;
 				}
 			}
 
-			relation finalRelation;
+			for (int j = 0; j < datalogQueries[i].getVector().size(); j++)
+			{
+				parameter nextParameterToCheck = datalogQueries[i].getVector()[j];
+				if (nextParameterToCheck.getIsID())
+				{
+					bool duplicate = false;
+					for (int x = 0; x < Positions.size(); x++)
+					{
+						if (nextParameterToCheck.toString() == renameVals[x])
+						{
+							duplicate = true;
+						}
+						if (duplicate)
+						{
+							break;
+						}
+					}
+					if (!duplicate)
+					{
+						Positions.push_back(j);
+						renameVals.push_back(nextParameterToCheck.toString());
+					}
 
-			finalRelation = newRelation.project(intVector);
+				}
+			}
 
-			newRelation = finalRelation.rename(stringVector);
-			//rename using indices
+			columnsToGrab = relationsToGrab.project(Positions);
 
-			cout << queries.at(i).toString() << "? ";
-			if (newRelation.tuplesSetSize() == 0)
+			scheme nextScheme;
+			nextScheme.setAttributes(renameVals);
+			columnsToGrab.setScheme(nextScheme);
+
+			cout << datalogQueries[i].toString() << "? ";
+			if (relationsToGrab.tuplesSetSize() == 0)
 			{
 				cout << "No\n";
 			}
 			else
 			{
-				cout << "Yes(" << newRelation.tuplesSetSize() << ")\n";
-				cout << newRelation.toString();
+				cout << "Yes(" << columnsToGrab.tuplesSetSize() << ")\n";
+				cout << columnsToGrab.toString();
 			}
 		}
 	}

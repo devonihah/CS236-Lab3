@@ -47,6 +47,19 @@ public:
 				match(FACTS);
 				match(COLON);
 				while (getTokenType() != RULES && errorVector.size() < 1) { fact(); }
+				vector<predicate> newFactsVector;
+				bool duplicateFact = false;
+				for (unsigned int i = 0; i < factVector.size() - 1; i++)
+				{
+					duplicateFact = false;
+					for (unsigned int j = i + 1; j < factVector.size(); j++)
+					{
+						if (factVector.at(i).getPredicateName() == factVector.at(j).getPredicateName() && factVector.at(i).getParamsString() == factVector.at(j).getParamsString()) duplicateFact = true;
+					}
+					if (!duplicateFact) newFactsVector.push_back(factVector.at(i));
+				}
+				newFactsVector.push_back(factVector.at(factVector.size() - 1));
+				factVector = newFactsVector;
 			}
 			if (getTokenType() == RULES)
 			{
@@ -86,6 +99,7 @@ public:
 			//cout << "Success!" << endl;
 			setDatalog();
 			//cout << printDatalog();
+			//cout << endl;
 			//cout << schemeVector.size() << endl;
 			//cout << factVector.size() << endl;
 			//cout << ruleVector.size() << endl;
