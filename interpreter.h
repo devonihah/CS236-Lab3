@@ -58,7 +58,7 @@ public:
 
 			for (unsigned int j = 0; j < datalogQueries[i].getVector().size(); j++)
 			{
-				for (int k = j + 1; k < datalogQueries[i].getVector().size(); k++)
+				for (unsigned int k = j + 1; k < datalogQueries[i].getVector().size(); k++)
 				{
 					bool exitLoop = false;
 					if (datalogQueries[i].getVector()[j].toString() == datalogQueries[i].getVector()[k].toString())
